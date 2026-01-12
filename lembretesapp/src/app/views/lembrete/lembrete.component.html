@@ -1,31 +1,151 @@
-<h2>Meus Lembretes</h2>
+<div class="container">
+    <!-- Header -->
+    <header class="header">
+        <h1>
+            <span>📋</span>
+            Lembretes App
+        </h1>
+        <p>Organize suas tarefas e nunca mais esqueça nada importante</p>
+    </header>
 
-<ul>
-    <li *ngFor="let lembrete of lembretes; let i = index" (click)="selecionarLembrete(lembrete);">
-        Título: {{lembrete.titulo}}
-        <br>
-        Conteúdo: {{lembrete.conteudo}}
-        <br>
-        Tags: {{lembrete.tags}}
-        <br>
-        Remover lembrete:
-        <button (click)="remover(lembrete.id)">X</button>
-    </li>
-</ul>
+    <!-- Cards de Funcionalidades (agora apenas 2 cards) -->
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">✏️</div>
+            <h3>Crie Lembretes</h3>
+            <p>Adicione lembretes com título, conteúdo e tags de forma simples e rápida.</p>
+            <button class="btn btn-primary" (click)="novo()">Novo Lembrete</button>
+        </div>
 
-<div *ngIf="selLembrete">
-    <p>Digite o título do lembrete</p>
-    <input type="text" [(ngModel)]="selLembrete.titulo">
-    <br>
-    <p>Digite o conteúdo do lembrete</p>
-    <input type="text" [(ngModel)]="selLembrete.conteudo">
-    <br>
-    <p>Digite as tags do lembrete</p>
-    <input type="text" [(ngModel)]="selLembrete.tags">
-    <br>
-    <br>
-    <button (click)="salvar();">Salvar</button>
-    <button (click)="cancelar();">Cancelar</button>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Total de Lembretes</h3>
+            <p>Você tem <strong>{{lembretes?.length || 0}}</strong> lembrete(s) cadastrado(s)</p>
+            <div class="stats">
+                <small>Gerencie todos em um só lugar</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário de Edição/Criação -->
+    <div *ngIf="selLembrete" class="lembrete-form" #formSection>
+        <h2>
+            <span *ngIf="selLembrete.id">✏️</span>
+            <span *ngIf="!selLembrete.id">➕</span>
+            {{selLembrete.id ? 'Editar Lembrete' : 'Novo Lembrete'}}
+        </h2>
+
+        <div class="form-group">
+            <label class="form-label">Título do Lembrete</label>
+            <input type="text" class="form-input" [(ngModel)]="selLembrete.titulo" placeholder="Ex: Reunião importante"
+                maxlength="100">
+            <div class="char-count">{{selLembrete.titulo?.length || 0}}/100</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Conteúdo</label>
+            <textarea class="form-input" [(ngModel)]="selLembrete.conteudo"
+                placeholder="Descreva os detalhes do lembrete..." rows="4" maxlength="500"></textarea>
+            <div class="char-count">{{selLembrete.conteudo?.length || 0}}/500</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tags (separadas por vírgula)</label>
+            <input type="text" class="form-input" [(ngModel)]="selLembrete.tags"
+                placeholder="Ex: trabalho, importante, urgente">
+            <div class="tags-hint">Use tags para organizar seus lembretes</div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-primary" (click)="salvar()">
+                <span>💾</span>
+                {{selLembrete.id ? 'Atualizar' : 'Salvar'}}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancelar()">
+                <span>❌</span>
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de Lembretes -->
+    <section class="lembrete-list" *ngIf="lembretes && lembretes.length > 0">
+        <div class="lembrete-header">
+            <h2>
+                <span>📝</span>
+                Meus Lembretes ({{lembretes.length}})
+            </h2>
+            <div class="list-actions">
+                <button class="btn btn-secondary" (click)="novo()">
+                    <span>➕</span>
+                    Novo Lembrete
+                </button>
+            </div>
+        </div>
+
+        <ul class="lembrete-items">
+            <li *ngFor="let lembrete of lembretes; let i = index" class="lembrete-item"
+                [class.selected]="selLembrete?.id === lembrete.id" (click)="selecionarLembrete(lembrete)">
+                <div class="lembrete-header-row">
+                    <div class="lembrete-title">
+                        <span class="lembrete-icon">📌</span>
+                        {{lembrete.titulo || 'Sem título'}}
+                    </div>
+                    <button class="btn-icon delete-btn" (click)="remover(lembrete.id); $event.stopPropagation()"
+                        title="Remover lembrete">
+                        🗑️
+                    </button>
+                </div>
+
+                <div class="lembrete-content">
+                    <div class="lembrete-field">
+                        <span class="field-label">Conteúdo:</span>
+                        <span class="field-value">{{lembrete.conteudo || 'Sem conteúdo'}}</span>
+                    </div>
+
+                    <div class="lembrete-field" *ngIf="lembrete.tags">
+                        <span class="field-label">Tags:</span>
+                        <div class="tags-container">
+                            <span class="tag" *ngFor="let tag of getTagsArray(lembrete.tags)">
+                                {{tag.trim()}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="lembrete-meta">
+                        <span class="lembrete-index">#{{i + 1}}</span>
+                        <span class="lembrete-id">ID: {{lembrete.id}}</span>
+                    </div>
+                </div>
+
+                <div class="lembrete-actions">
+                    <button class="btn-icon" (click)="selecionarLembrete(lembrete); $event.stopPropagation()"
+                        title="Editar lembrete">
+                        ✏️
+                    </button>
+                    <button class="btn-icon delete-btn" (click)="remover(lembrete.id); $event.stopPropagation()"
+                        title="Remover lembrete">
+                        🗑️
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Estado vazio -->
+    <div *ngIf="!lembretes || lembretes.length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>Nenhum lembrete encontrado</h3>
+        <p>Você ainda não tem lembretes cadastrados. Clique no botão abaixo para criar o primeiro!</p>
+        <button class="btn btn-primary" (click)="novo()">
+            <span>➕</span>
+            Criar Primeiro Lembrete
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Gerenciamento simplificado de tarefas</p>
+        <p>Feito com Angular 19 e ❤️ | Total: {{lembretes?.length || 0}} lembrete(s)</p>
+    </footer>
 </div>
-<br>
-<button (click)="novo();">Novo</button>

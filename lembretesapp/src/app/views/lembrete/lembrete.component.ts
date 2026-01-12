@@ -34,7 +34,7 @@ export class LembreteComponent implements OnInit {
   }
 
   salvar(): void {
-    if(this.modoEdicao) {
+    if (this.modoEdicao) {
       this.lembretesService.atualizar(this.selLembrete);
     } else {
       this.lembretesService.inserir(this.selLembrete);
@@ -55,5 +55,22 @@ export class LembreteComponent implements OnInit {
 
   recarregarLembretes(): void {
     this.lembretes = this.lembretesService.exibir();
+  }
+
+  getTagsArray(tagsString: string): string[] {
+    if (!tagsString) return [];
+    return tagsString.split(',').filter(tag => tag.trim() !== '');
+  }
+
+  scrollToForm() {
+    setTimeout(() => {
+      const formElement = document.querySelector('.lembrete-form');
+      if (formElement) {
+        formElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   }
 }
