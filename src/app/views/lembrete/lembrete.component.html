@@ -1,0 +1,31 @@
+<h2>Meus Lembretes</h2>
+
+<ul>
+    <li *ngFor="let lembrete of lembretes; let i = index" (click)="selecionarLembrete(lembrete);">
+        Título: {{lembrete.titulo}}
+        <br>
+        Conteúdo: {{lembrete.conteudo}}
+        <br>
+        Tags: {{lembrete.tags}}
+        <br>
+        Remover lembrete:
+        <button (click)="remover(lembrete.id)">X</button>
+    </li>
+</ul>
+
+<div *ngIf="selLembrete">
+    <p>Digite o título do lembrete</p>
+    <input type="text" [(ngModel)]="selLembrete.titulo">
+    <br>
+    <p>Digite o conteúdo do lembrete</p>
+    <input type="text" [(ngModel)]="selLembrete.conteudo">
+    <br>
+    <p>Digite as tags do lembrete</p>
+    <input type="text" [(ngModel)]="selLembrete.tags">
+    <br>
+    <br>
+    <button (click)="salvar();">Salvar</button>
+    <button (click)="cancelar();">Cancelar</button>
+</div>
+<br>
+<button (click)="novo();">Novo</button>
