@@ -1,4 +1,4 @@
-# todolist-angular
+# To Do List em Angular
 ## *Projeto individual - Disciplina: Programação WEB II*
 ### Este projeto foi desenvolvido durante o 5º semestre (2024/2) da graduação em Engenharia da Computação, como trabalho prático da disciplina de Progrmação WEB II.
 
